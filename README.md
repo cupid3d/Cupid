@@ -21,9 +21,7 @@ TL;DR: one image to cannonically posed 3D object and object-centric camera.
 
 ## 🚧 Code
 
-The code is currently under development and is expected to be released in Jan 2026. Please check the project website or the GitHub repository for updates and the official release. 
-
-
+The code is currently under development and is expected to be released by January 2026. For progress updates and the official release, please check the project website or the GitHub repository.
 
 ## Citation
 
