@@ -1,0 +1,100 @@
+{
+    "models": {
+        "denoiser": {
+            "name": "SparseStructureFlowModel",
+            "args": {
+                "resolution": 16,
+                "in_channels": 16,
+                "out_channels": 16,
+                "model_channels": 1024,
+                "cond_channels": 1024,
+                "num_blocks": 24,
+                "num_heads": 16,
+                "mlp_ratio": 4,
+                "patch_size": 1,
+                "pe_mode": "ape",
+                "qk_rms_norm": true,
+                "use_fp16": true
+            }
+        }
+    },
+    "dataset": {
+        "name": "ImageConditionedSparseUVStructureLatent",
+        "args": {
+            "ss_latent_model": "ss_enc_conv3d_16l8_fp16",
+            "suv_latent_model": "uv_vae_conv3d_16l8_fp16-SAH3D-Mfull-L1-Constssuv-fixcrop_step1000000",
+            "min_aesthetic_score": 4.5,
+            "image_size": 518,
+            "pretrained_ss_dec": "checkpoint/TRELLIS-image-large/ckpts/ss_dec_conv3d_16l8_fp16",
+            "suv_dec_path": "outputs/uv_vae_conv3d_16l8_fp16-SAH3D-Mfull-L1-Constssuv-fixcrop",
+            "suv_dec_ckpt": "step1000000",
+            "discard_occluded_voxels": false,
+            "crop_size_ratio": [1.0, 1.4, 1.5],
+            "crop_prob": 1.0,
+            "crop_in_eval": true,
+            "crop_num_discretization_buckets": 9
+        }
+    },
+    "trainer": {
+        "name": "ImageConditionedFlowMatchingCFGTrainer",
+        "args": {
+            "max_steps": 1000000,
+            "batch_size_per_gpu": 8,
+            "batch_split": 1,
+            "num_workers": 4,
+            "finetune_ckpt": {
+                "denoiser": {
+                    "path": "checkpoint/TRELLIS-image-large/ckpts/ss_flow_img_dit_L_16l8_fp16.safetensors",
+                    "mismatch_strategy": "skip"
+                }
+            },
+            "optimizer": {
+                "name": "AdamW",
+                "args": {
+                    "lr": 0.0001,
+                    "weight_decay": 0.01,
+                    "weight_decay_bias": 0.0,
+                    "weight_decay_layer_norm": 0.0
+                }
+            },
+            "ema_rate": [
+                0.9999
+            ],
+            "fp16_mode": "inflat_all",
+            "fp16_scale_growth": 0.001,
+            "grad_clip": {
+                "name": "AdaptiveGradClipper",
+                "args": {
+                    "max_norm": 1.0,
+                    "clip_percentile": 95
+                }
+            },
+            "i_log": 500,
+            "i_sample": 10000,
+            "i_save": 10000,
+            "p_uncond": 0.1,
+            "t_schedule": {
+                "name": "logitNormal",
+                "args": {
+                    "mean": 1.0,
+                    "std": 1.0
+                }
+            },
+            "sigma_min": 1e-5,
+            "image_cond_model": "dinov2_vitl14_reg"
+        }
+    },
+    "evaluator": {
+        "name": "ImageConditionedFlowMatchingEvaluator",
+        "args": {
+            "batch_size_per_gpu": 8,
+            "num_workers": 4,
+            "input_ssuv": true,
+            "input_uv_volume": true,
+            "predict_ssuv": true,
+            "predict_ssuv_from_ss": true,
+            "dilation_sigma": 0.5,
+            "dilation_min_weight": 0.05
+        }
+    }
+}

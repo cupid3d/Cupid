@@ -1,0 +1,3 @@
+[submodule "cupid/representations/mesh/flexicubes"]
+	path = cupid/representations/mesh/flexicubes
+	url = https://github.com/MaxtirError/FlexiCubes.git

@@ -1,0 +1,71 @@
+{
+    "models": {
+        "decoder": {
+            "name": "ElasticSLatRadianceFieldDecoder",
+            "args": {
+                "resolution": 64,
+                "model_channels": 768,
+                "latent_channels": 8,
+                "num_blocks": 12,
+                "num_heads": 12,
+                "mlp_ratio": 4,
+                "attn_mode": "swin",
+                "window_size": 8,
+                "use_fp16": true,
+                "representation_config": {
+                    "rank": 16,
+                    "dim": 8
+                }
+            }
+        }
+    },
+    "dataset": {
+        "name": "SLat2Render",
+        "args": {
+            "image_size": 512,
+            "latent_model": "dinov2_vitl14_reg_slat_enc_swin8_B_64l8_fp16",
+            "min_aesthetic_score": 4.5,
+            "max_num_voxels": 32768
+        }
+    },
+    "trainer": {
+        "name": "SLatVaeRadianceFieldDecoderTrainer",
+        "args": {
+            "max_steps": 1000000,
+            "batch_size_per_gpu": 4,
+            "batch_split": 2,
+            "optimizer": {
+                "name": "AdamW",
+                "args": {
+                    "lr": 1e-4,
+                    "weight_decay": 0.0
+                }
+            },
+            "ema_rate": [
+                0.9999
+            ],
+            "fp16_mode": "inflat_all",
+            "fp16_scale_growth": 0.001,
+            "elastic": {
+                "name": "LinearMemoryController",
+                "args": {
+                    "target_ratio": 0.75,
+                    "max_mem_ratio_start": 0.5
+                }
+            },
+            "grad_clip": {
+                "name": "AdaptiveGradClipper",
+                "args": {
+                    "max_norm": 1.0,
+                    "clip_percentile": 95
+                }
+            },
+            "i_log": 500,
+            "i_sample": 10000,
+            "i_save": 10000,
+            "loss_type": "l1",
+            "lambda_ssim": 0.2,
+            "lambda_lpips": 0.2
+        }
+    }
+}
