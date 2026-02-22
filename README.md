@@ -152,8 +152,8 @@ pipeline = Cupid3DPipeline.from_pretrained("hbb1/Cupid")
 pipeline.cuda()
 
 # Load image and segmentation masks
-image = sample_utils.load_image("assets/multi_no_occ/pexels-anna-nekrashevich-7214602.jpg")
-masks = [sample_utils.load_image(p) for p in sorted(glob.glob("assets/multi_no_occ/pexels-anna-nekrashevich-7214602/segmentation_*.png"))]
+image = sample_utils.load_image("assets/real_scenes/pexels-anna-nekrashevich-7214602.jpg")
+masks = [sample_utils.load_image(p) for p in sorted(glob.glob("assets/real_scenes/pexels-anna-nekrashevich-7214602/segmentation_*.png"))]
 
 # Run 3D reconstruction for each object
 objects = [pipeline.run(image, mask=mask) for mask in masks]
