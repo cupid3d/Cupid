@@ -11,6 +11,15 @@
       <img src="https://img.shields.io/badge/Project-Website-33728e.svg" alt="Project Website">
     </a>
   </p>
+</div>
+
+## 📰 News
+
+- **[2026-10-25]** 🚀 **[GenSfM](https://github.com/dotb1ue/GenSfm)**, our follow-up work extending CUPID to **multi-view inputs**, is now open source! It jointly recovers 3D geometry, appearance, and camera poses from a few uncalibrated images. Visit the [project page](https://dotb1ue.github.io/GenSfm/) for results and demos.
+
+## Overview
+
+<div align="center">
 
   <!-- TL;DR Box -->
   <div style="background-color: rgba(0, 0, 0, 0.05); border-radius: 8px; padding: 10px; display: inline-block; margin: 10px 0;">
@@ -27,7 +36,7 @@
 <!-- Caption -->
 <p align="left" style="font-size: 0.95em; line-height: 1.5; margin-top: 15px;">
   <!-- <strong>Results for <em>generative 3D reconstruction</em> from a single test image.</strong><br> -->
-  Given an input image (top left), CUPID estimates camera pose (bottom left) and reconstructs a 3D model (bottom right), re-rendering the input (top right). It is robust to changes in scale, placement, and lighting while preserving fine texture, and supports component-aligned scene reconstruction (bottom row). All results are produced in seconds via feed-forward sampling of the learned model. See <a href="https://cupid3d.github.io/#sec:interactive_demo">cupid3d.github.io</a> for an immersive view of the interactive 3D results.
+  Given an input image (top left), CUPID estimates camera pose (bottom left) and reconstructs a 3D model (bottom right), re-rendering the input (top right). It is robust to changes in scale, placement, and lighting while preserving fine texture, and supports component-aligned scene reconstruction (bottom row). All results are produced in seconds using the learned diffusion model. See <a href="https://cupid3d.github.io/#sec:interactive_demo">cupid3d.github.io</a> for an immersive view of the interactive 3D results.
 </p>
 
 ## 📦 Installation
@@ -37,9 +46,9 @@
 *   **🐧 System**: The code is currently tested only on **Linux**. For Windows setup, you may refer to issues in the original repository (not fully tested).
 *   **🖥️ Hardware**: An NVIDIA GPU with at least **16GB of memory** is necessary. The code has been verified on NVIDIA A100 and A6000 GPUs.
 *   **⚙️ Software**:
-    *   The **CUDA Toolkit** is needed to compile certain submodules. The code has been tested with CUDA versions 11.8 and 12.2.
+    *   The **CUDA Toolkit** is needed to compile certain submodules. Use a toolkit compatible with your installed PyTorch CUDA build.
     *   **Conda** is recommended for managing dependencies.
-    *   Python version 3.8 or higher is required.
+    *   The provided setup script creates a **Python 3.11** environment.
 
 ### Installation Steps
 
@@ -54,9 +63,9 @@
 
     > **⚠️ Note before running:**
     > *   **Environment:** Adding `--new-env` creates a new conda environment named `cupid`. Remove this flag to use an existing environment.
-    > *   **CUDA Version:** Default is PyTorch 2.4.0 with CUDA 11.8. If you have a different CUDA Toolkit (e.g., 12.2), remove `--new-env` and install PyTorch manually first.
+    > *   **CUDA Version:** The setup script defaults to **PyTorch 2.4.0 with CUDA 12.4**. To use another PyTorch/CUDA combination, omit `--new-env` and install a compatible PyTorch build first.
     > *   **Multiple CUDA Versions:** If you have multiple versions installed, set your path first:
-    >     `export PATH=/usr/local/cuda-11.8/bin:$PATH`
+    >     `export PATH=/usr/local/cuda-12.4/bin:$PATH`
     > *   **Attention Backend:** Default is `flash-attn`. For unsupported GPUs (e.g., V100), remove `--flash-attn` and set `os.environ['ATTN_BACKEND'] = 'xformers'`.
 
     **Create environment and install:**
@@ -119,10 +128,10 @@ save_mesh(
 ```
 
 **Output Files:**
-After running the code, the `output` directory will contain:
-*   `mesh0.glb`: A GLB file containing the extracted textured mesh.
-*   `metadata.json`: A JSON file containing the camera extrinsics and intrinsics.
-*   `sample.png`: The side-by-side comparison (input vs rendered)
+After running the code:
+*   `output/mesh0.glb`: A GLB file containing the extracted textured mesh.
+*   `output/metadata.json`: A JSON file containing the camera extrinsics and intrinsics.
+*   `sample.png`: The side-by-side comparison (input vs rendered), saved in the current working directory.
 
 **Convert to Blender:**
 You can convert the GLB and metadata into a `.blend` file using:
@@ -178,10 +187,10 @@ After running the code, the `result` directory will contain:
 **Convert to Blender:**
 Similarly, you can convert the GLB and metadata into a `.blend` file using:
 ```bash
-python convert_blender.py --meta_file output/metadata.json --output_path output/scene.blend --save_file
+python convert_blender.py --meta_file result/metadata.json --output_path result/scene.blend --save_file
 ```
 
-## 🚀 Feedbacks & Contributing
+## 🚀 Feedback & Contributing
 We welcome feedback and contributions from the community!
 
 *   **Request a Feature**: Have a great idea? [Open a Feature Request](https://github.com/cupid3d/Cupid/issues/new?labels=enhancement).
@@ -191,9 +200,9 @@ We welcome feedback and contributions from the community!
 
 ## ⚖️ Acknowledgment and License
 
-The code is heavily built upon [TRELLIS](https://github.com/microsoft/TRELLIS). We thank for their great job! The models and the majority of the code are licensed under the [MIT License](LICENSE). The following submodules may have different licenses:
+The code is heavily built upon [TRELLIS](https://github.com/microsoft/TRELLIS). We thank the authors for their work! The models and the majority of the code are licensed under the [MIT License](LICENSE). The following submodules may have different licenses:
 
-*   **[diffoctreerast](https://github.com/hbb1/diffoctreerast)**: We slightly modifed this CUDA-based real-time [differentiable octree renderer](https://github.com/JeffreyXiang/diffoctreerast) to support non-center rendering. This renderer is derived from the [diff-gaussian-rasterization](https://github.com/graphdeco-inria/diff-gaussian-rasterization) project and is available under the [LICENSE](https://github.com/JeffreyXiang/diffoctreerast/blob/master/LICENSE).
+*   **[diffoctreerast](https://github.com/hbb1/diffoctreerast)**: We slightly modified this CUDA-based real-time [differentiable octree renderer](https://github.com/JeffreyXiang/diffoctreerast) to support non-center rendering. This renderer is derived from the [diff-gaussian-rasterization](https://github.com/graphdeco-inria/diff-gaussian-rasterization) project and is available under the [LICENSE](https://github.com/JeffreyXiang/diffoctreerast/blob/master/LICENSE).
 *   **Modified Flexicubes**: In this project, we used a modified version of [FlexiCubes](https://github.com/nv-tlabs/FlexiCubes) to support vertex attributes. This modified version is licensed under the [LICENSE](https://github.com/nv-tlabs/FlexiCubes/blob/main/LICENSE.txt).
 
 ## 📜 Citation
